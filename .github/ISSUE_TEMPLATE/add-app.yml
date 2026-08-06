@@ -1,0 +1,73 @@
+name: Add an app
+description: Submit an Android app for inclusion in IIXII Store
+title: "[App Submission]: "
+labels:
+  - app-submission
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit one app per issue. After review, a maintainer can add the `publish-app` label to publish it to the live catalogue.
+
+  - type: input
+    id: app_name
+    attributes:
+      label: App name
+      placeholder: ArchiveTune
+    validations:
+      required: true
+
+  - type: input
+    id: app_id
+    attributes:
+      label: App ID
+      description: A permanent lowercase identifier using letters, numbers, dots, underscores, or hyphens.
+      placeholder: archivetune
+    validations:
+      required: true
+
+  - type: input
+    id: package_name
+    attributes:
+      label: Android package name
+      placeholder: com.example.archivetune
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: GitHub source repository
+      description: The repository whose latest GitHub Release contains the APK.
+      placeholder: https://github.com/owner/repository
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A short description shown on the app detail page.
+      placeholder: Describe the app and its main purpose.
+    validations:
+      required: true
+
+  - type: input
+    id: icon_url
+    attributes:
+      label: Icon URL
+      description: Direct HTTPS URL to the app icon.
+      placeholder: https://example.com/icon.png
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot_urls
+    attributes:
+      label: Screenshot URLs
+      description: Optional. Add one direct HTTPS image URL per line. Any number of screenshots is supported.
+      placeholder: |
+        https://example.com/screenshot-1.png
+        https://example.com/screenshot-2.png
+    validations:
+      required: false

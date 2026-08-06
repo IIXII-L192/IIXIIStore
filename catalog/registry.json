@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-06T05:42:00Z",
+  "apps": [
+    {
+      "id": "pocketops",
+      "name": "PocketOps",
+      "package_name": "l192.aakarsh.pocketops",
+      "source": "https://github.com/IIXII-L192/PocketOps-app",
+      "description": "Unified utility dashboard for Android. Fast UPI/PayPal collection, WhatsApp direct chat, and Instagram shortcuts under a Custom Open Source license.",
+      "icon_url": "https://raw.githubusercontent.com/IIXII-L192/PocketOps-app/main/PocketOps.png",
+      "screenshot_urls": [
+        "https://github.com/IIXII-L192/PocketOps-app/raw/main/Menu.png",
+        "https://github.com/IIXII-L192/PocketOps-app/raw/main/QuickUPI.png",
+        "https://github.com/IIXII-L192/PocketOps-app/raw/main/QuickUPIQR.png",
+        "https://github.com/IIXII-L192/PocketOps-app/raw/main/QuickChat.png",
+        "https://github.com/IIXII-L192/PocketOps-app/raw/main/QuickInsta.png"
+      ],
+      "last_modified": 1783263282633,
+      "enabled": true
+    },
+    {
+      "id": "bunkwise",
+      "name": "BunkWise",
+      "package_name": "l192.aakarsh.bunkwise",
+      "source": "https://github.com/IIXII-L192/BunkWise-App",
+      "description": "BunkWise is a premium, offline-first attendance manager and timetable scheduler designed for students to take control of their class schedules and attendance criteria.",
+      "icon_url": "https://raw.githubusercontent.com/IIXII-L192/BunkWise-App/main/icon.png",
+      "screenshot_urls": [
+        "https://bunkwiser.vercel.app/screenshots/bw_timetable.png",
+        "https://bunkwiser.vercel.app/screenshots/bw_attendance.png",
+        "https://bunkwiser.vercel.app/screenshots/bw_simulator.png"
+      ],
+      "last_modified": 1783263275379,
+      "enabled": true
+    }
+  ]
+}
