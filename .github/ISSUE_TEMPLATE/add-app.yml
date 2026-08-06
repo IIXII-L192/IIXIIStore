@@ -3,17 +3,21 @@ description: Submit an Android app for inclusion in IIXII Store
 title: "[App Submission]: "
 labels:
   - app-submission
+
 body:
   - type: markdown
     attributes:
       value: |
-        Submit one app per issue. After review, a maintainer can add the `publish-app` label to publish it to the live catalogue.
+        Submit one app per issue.
+
+        Submitting this form does not publish the app automatically.
+        A maintainer must review the submission and add the `publish-app` label.
 
   - type: input
     id: app_name
     attributes:
       label: App name
-      placeholder: ArchiveTune
+      placeholder: IIXII Store
     validations:
       required: true
 
@@ -22,7 +26,7 @@ body:
     attributes:
       label: App ID
       description: A permanent lowercase identifier using letters, numbers, dots, underscores, or hyphens.
-      placeholder: archivetune
+      placeholder: iixiistore
     validations:
       required: true
 
@@ -30,7 +34,7 @@ body:
     id: package_name
     attributes:
       label: Android package name
-      placeholder: com.example.archivetune
+      placeholder: l192.aakarsh.iixiistore
     validations:
       required: true
 
@@ -39,7 +43,7 @@ body:
     attributes:
       label: GitHub source repository
       description: The repository whose latest GitHub Release contains the APK.
-      placeholder: https://github.com/owner/repository
+      placeholder: https://github.com/IIXII-L192/IIXIIStore
     validations:
       required: true
 
@@ -56,7 +60,7 @@ body:
     id: icon_url
     attributes:
       label: Icon URL
-      description: Direct HTTPS URL to the app icon.
+      description: Enter a direct HTTPS URL to the app icon.
       placeholder: https://example.com/icon.png
     validations:
       required: true
@@ -65,7 +69,7 @@ body:
     id: screenshot_urls
     attributes:
       label: Screenshot URLs
-      description: Optional. Add one direct HTTPS image URL per line. Any number of screenshots is supported.
+      description: Optional. Enter one direct HTTPS image URL per line. Any number of screenshots is supported.
       placeholder: |
         https://example.com/screenshot-1.png
         https://example.com/screenshot-2.png
