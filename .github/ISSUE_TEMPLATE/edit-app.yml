@@ -12,14 +12,15 @@ body:
 
         Enter the app's current permanent App ID, then fill only the fields that should be changed.
 
-        A maintainer must add the `publish-edit` label before the changes are published.
+        Submitting this form does not apply the edit automatically.
+        A maintainer must review the request and add the `publish-edit` label.
 
   - type: input
     id: current_app_id
     attributes:
       label: Current App ID
-      description: The permanent ID currently used in catalog/registry.json.
-      placeholder: pocketops
+      description: The permanent App ID currently used in catalog/registry.json.
+      placeholder: iixiistore
     validations:
       required: true
 
@@ -28,21 +29,27 @@ body:
     attributes:
       label: New app name
       description: Leave empty to keep the current app name.
-      placeholder: PocketOps
+      placeholder: IIXII Store
+    validations:
+      required: false
 
   - type: input
     id: new_package_name
     attributes:
       label: New Android package name
       description: Leave empty to keep the current package name.
-      placeholder: l192.aakarsh.pocketops
+      placeholder: l192.aakarsh.iixiistore
+    validations:
+      required: false
 
   - type: input
     id: new_source
     attributes:
       label: New GitHub source repository
       description: Leave empty to keep the current repository.
-      placeholder: https://github.com/owner/repository
+      placeholder: https://github.com/IIXII-L192/IIXIIStore
+    validations:
+      required: false
 
   - type: textarea
     id: new_description
@@ -50,6 +57,8 @@ body:
       label: New description
       description: Leave empty to keep the current description.
       placeholder: Enter the complete replacement description.
+    validations:
+      required: false
 
   - type: input
     id: new_icon_url
@@ -57,6 +66,8 @@ body:
       label: New icon URL
       description: Leave empty to keep the current icon.
       placeholder: https://example.com/icon.png
+    validations:
+      required: false
 
   - type: dropdown
     id: screenshot_action
@@ -75,10 +86,12 @@ body:
     id: screenshot_urls
     attributes:
       label: Replacement screenshot URLs
-      description: When replacing screenshots, enter the complete new list with one HTTPS URL per line.
+      description: When replacing screenshots, enter the complete new list with one direct HTTPS image URL per line.
       placeholder: |
         https://example.com/screenshot-1.png
         https://example.com/screenshot-2.png
+    validations:
+      required: false
 
   - type: dropdown
     id: enabled_action
@@ -98,6 +111,6 @@ body:
     attributes:
       label: Change summary
       description: Briefly explain what is being changed.
-      placeholder: Updated the description, icon and screenshots.
+      placeholder: Updated the app description, icon and screenshots.
     validations:
       required: true
