@@ -1,7 +1,24 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-06T08:13:51Z",
+  "generated_at": "2026-08-06T08:47:56Z",
   "apps": [
+    {
+      "id": "westeros_portal",
+      "name": "Westeros Portal",
+      "package_name": "l192.aakarsh.westerosportal",
+      "source": "https://github.com/IIXII-L192/Westeros-Portal-app.git",
+      "description": "An unofficial companion for A Wiki of Ice and Fire from Westeros.org",
+      "icon_url": "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/westeros-portal-logo.png?raw=true",
+      "screenshot_urls": [
+        "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/home.png?raw=true",
+        "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/p1.png?raw=true",
+        "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/p2.png?raw=true",
+        "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/forum.png?raw=true",
+        "https://github.com/IIXII-L192/Westeros-Portal-app/blob/main/screenshots/about.png?raw=true"
+      ],
+      "last_modified": 1786006076113,
+      "enabled": true
+    },
     {
       "id": "pocketops",
       "name": "PocketOps",
