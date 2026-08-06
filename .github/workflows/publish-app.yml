@@ -2,7 +2,9 @@ name: Publish app from issue
 
 on:
   issues:
-    types: [labeled]
+    types:
+      - labeled
+
   workflow_dispatch:
     inputs:
       issue_number:
@@ -22,7 +24,11 @@ jobs:
   publish:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issues' && github.event.label.name == 'publish-app')
+      (
+        github.event_name == 'issues' &&
+        github.event.label.name == 'publish-app'
+      )
+
     runs-on: ubuntu-latest
 
     steps:
@@ -39,56 +45,147 @@ jobs:
           EVENT_ISSUE: ${{ github.event.issue.number }}
         run: |
           set -euo pipefail
+
           ISSUE_NUMBER="${DISPATCH_ISSUE:-${EVENT_ISSUE:-}}"
-          test -n "$ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No issue number was provided." >&2
+            exit 1
+          fi
+
           echo "number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
 
-          gh issue view "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --json body --jq .body > issue-body.md
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json body \
+            --jq '.body' \
+            > issue-body.md
 
-          LABELS="$(gh issue view "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')"
+          LABELS="$(
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json labels \
+              --jq '.labels[].name'
+          )"
+
           if ! grep -Fxq "app-submission" <<< "$LABELS"; then
             echo "Issue #$ISSUE_NUMBER is not an app-submission issue." >&2
             exit 1
           fi
 
-      - name: Publish catalogue entry
+      - name: Create catalogue labels
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "published" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "1F883D" \
+            --description "Published to the live catalogue" \
+            --force
+
+          gh label create "publication-failed" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "D1242F" \
+            --description "Catalogue publication failed" \
+            --force
+
+          gh label create "publish-app" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "8250DF" \
+            --description "Approve and publish this app" \
+            --force
+
+      - name: Publish catalogue entry
+        id: publish
+        env:
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
         run: |
-          set -uo pipefail
-
-          gh label create published --repo "$GITHUB_REPOSITORY" --color 1F883D --description "Published to the live catalogue" --force
-          gh label create publication-failed --repo "$GITHUB_REPOSITORY" --color D1242F --description "Catalogue publication failed" --force
-          gh label create publish-app --repo "$GITHUB_REPOSITORY" --color 8250DF --description "Approve and publish this app" --force
+          set +e
 
           python3 .github/scripts/publish_app.py \
             --issue-body issue-body.md \
             --registry catalog/registry.json \
             --issue-number "$ISSUE_NUMBER" \
             > publish-result.md 2>&1
+
           STATUS=$?
 
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+
           if [ "$STATUS" -ne 0 ]; then
-            gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file publish-result.md
-            gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-              --add-label publication-failed
-            gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-              --remove-label publish-app || true
+            cat publish-result.md
             exit "$STATUS"
           fi
 
+          cat publish-result.md
+
+      - name: Handle publication failure
+        if: failure() && steps.issue.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          if [ -f publish-result.md ]; then
+            gh issue comment "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body-file publish-result.md
+          else
+            gh issue comment "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "❌ Catalogue publication failed. Check the workflow logs for details."
+          fi
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --add-label "publication-failed"
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "publish-app" || true
+
+      - name: Commit updated catalogue
+        if: success()
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add catalog/registry.json
-          git commit -m "Publish app from issue #$ISSUE_NUMBER"
-          git push
 
-          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file publish-result.md
-          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-            --add-label published \
-            --state closed
-          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-            --remove-label publish-app || true
-          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-            --remove-label publication-failed || true
+          git add catalog/registry.json
+
+          if git diff --cached --quiet; then
+            echo "The catalogue contains no new changes."
+          else
+            git commit -m "Publish app from issue #$ISSUE_NUMBER"
+            git push
+          fi
+
+      - name: Complete publication
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body-file publish-result.md
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --add-label "published"
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "publish-app" || true
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "publication-failed" || true
+
+          gh issue close "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --reason "completed"
