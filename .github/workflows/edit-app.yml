@@ -1,0 +1,192 @@
+name: Edit app from issue
+
+on:
+  issues:
+    types:
+      - labeled
+
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number containing the app edit
+        required: true
+        type: number
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: edit-iixiistore-catalogue
+  cancel-in-progress: false
+
+jobs:
+  edit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event_name == 'issues' &&
+        github.event.label.name == 'publish-edit'
+      )
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve and validate edit issue
+        id: issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISPATCH_ISSUE: ${{ inputs.issue_number }}
+          EVENT_ISSUE: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          ISSUE_NUMBER="${DISPATCH_ISSUE:-${EVENT_ISSUE:-}}"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No issue number was provided." >&2
+            exit 1
+          fi
+
+          echo "number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json body \
+            --jq '.body' \
+            > issue-body.md
+
+          LABELS="$(
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json labels \
+              --jq '.labels[].name'
+          )"
+
+          if ! grep -Fxq "app-edit" <<< "$LABELS"; then
+            echo "Issue #$ISSUE_NUMBER is not an app-edit issue." >&2
+            exit 1
+          fi
+
+      - name: Create edit labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "edited" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "1F883D" \
+            --description "App edit published successfully" \
+            --force
+
+          gh label create "edit-failed" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "D1242F" \
+            --description "App catalogue edit failed" \
+            --force
+
+          gh label create "publish-edit" \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "8250DF" \
+            --description "Approve and publish this app edit" \
+            --force
+
+      - name: Apply catalogue edit
+        id: edit
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set +e
+
+          python3 .github/scripts/edit_app.py \
+            --issue-body issue-body.md \
+            --registry catalog/registry.json \
+            --issue-number "$ISSUE_NUMBER" \
+            > edit-result.md 2>&1
+
+          STATUS=$?
+
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+
+          if [ "$STATUS" -ne 0 ]; then
+            cat edit-result.md
+            exit "$STATUS"
+          fi
+
+          cat edit-result.md
+
+      - name: Handle edit failure
+        if: failure() && steps.issue.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          if [ -f edit-result.md ]; then
+            gh issue comment "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body-file edit-result.md
+          else
+            gh issue comment "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "❌ App edit failed. Check the workflow logs for details."
+          fi
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --add-label "edit-failed"
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "publish-edit" || true
+
+      - name: Commit edited catalogue
+        if: success()
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add catalog/registry.json
+
+          if git diff --cached --quiet; then
+            echo "The edit produced no catalogue changes."
+            exit 1
+          fi
+
+          git commit -m "Edit app from issue #$ISSUE_NUMBER"
+          git push
+
+      - name: Complete app edit
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body-file edit-result.md
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --add-label "edited"
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "publish-edit" || true
+
+          gh issue edit "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label "edit-failed" || true
+
+          gh issue close "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --reason "completed"
