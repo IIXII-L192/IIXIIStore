@@ -1,0 +1,103 @@
+name: Edit an app
+description: Edit an app already published in IIXII Store
+title: "[App Edit]: "
+labels:
+  - app-edit
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to edit an app already published in IIXII Store.
+
+        Enter the app's current permanent App ID, then fill only the fields that should be changed.
+
+        A maintainer must add the `publish-edit` label before the changes are published.
+
+  - type: input
+    id: current_app_id
+    attributes:
+      label: Current App ID
+      description: The permanent ID currently used in catalog/registry.json.
+      placeholder: pocketops
+    validations:
+      required: true
+
+  - type: input
+    id: new_app_name
+    attributes:
+      label: New app name
+      description: Leave empty to keep the current app name.
+      placeholder: PocketOps
+
+  - type: input
+    id: new_package_name
+    attributes:
+      label: New Android package name
+      description: Leave empty to keep the current package name.
+      placeholder: l192.aakarsh.pocketops
+
+  - type: input
+    id: new_source
+    attributes:
+      label: New GitHub source repository
+      description: Leave empty to keep the current repository.
+      placeholder: https://github.com/owner/repository
+
+  - type: textarea
+    id: new_description
+    attributes:
+      label: New description
+      description: Leave empty to keep the current description.
+      placeholder: Enter the complete replacement description.
+
+  - type: input
+    id: new_icon_url
+    attributes:
+      label: New icon URL
+      description: Leave empty to keep the current icon.
+      placeholder: https://example.com/icon.png
+
+  - type: dropdown
+    id: screenshot_action
+    attributes:
+      label: Screenshot handling
+      description: Choose what should happen to the current screenshot list.
+      options:
+        - Keep current screenshots
+        - Replace screenshots
+        - Remove all screenshots
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot_urls
+    attributes:
+      label: Replacement screenshot URLs
+      description: When replacing screenshots, enter the complete new list with one HTTPS URL per line.
+      placeholder: |
+        https://example.com/screenshot-1.png
+        https://example.com/screenshot-2.png
+
+  - type: dropdown
+    id: enabled_action
+    attributes:
+      label: App visibility
+      description: Choose whether the app should remain visible in IIXII Store.
+      options:
+        - Keep current status
+        - Enable app
+        - Disable app
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: change_summary
+    attributes:
+      label: Change summary
+      description: Briefly explain what is being changed.
+      placeholder: Updated the description, icon and screenshots.
+    validations:
+      required: true
