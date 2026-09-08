@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-07T10:12:36Z",
+  "generated_at": "2026-09-08T04:08:02Z",
   "apps": [
     {
       "id": "bunkly",
@@ -15,8 +15,9 @@
         "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Target%20Planner.png?raw=true",
         "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Time%20Table.png?raw=true"
       ],
-      "last_modified": 1788775956293,
-      "enabled": true
+      "last_modified": 1788840482792,
+      "enabled": true,
+      "website": "https://bunkly192.vercel.app"
     },
     {
       "id": "bunkwise",
