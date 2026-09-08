@@ -40,6 +40,10 @@ def require(sections: dict[str, str], label: str) -> str:
     return value
 
 
+def optional(sections: dict[str, str], label: str) -> str:
+    return sections.get(label.lower(), "").strip()
+
+
 def validate_https_url(value: str, field: str) -> str:
     parsed = urlparse(value)
     if parsed.scheme != "https" or not parsed.netloc:
@@ -86,6 +90,9 @@ def main() -> int:
     app_id = require(sections, "App ID").lower()
     package_name = require(sections, "Android package name")
     source = require(sections, "GitHub source repository").rstrip("/")
+    website = optional(sections, "Website URL")
+    if website:
+        validate_https_url(website, "Website URL")
     description = require(sections, "Description")
     icon_url = validate_https_url(require(sections, "Icon URL"), "Icon URL")
     screenshots = parse_screenshots(sections.get("screenshot urls", ""))
@@ -114,6 +121,7 @@ def main() -> int:
         "name": app_name,
         "package_name": package_name,
         "source": source,
+        "website": website,
         "description": description,
         "icon_url": icon_url,
         "screenshot_urls": screenshots,
