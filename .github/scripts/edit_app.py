@@ -165,6 +165,10 @@ def main() -> int:
         sections,
         "New GitHub source repository",
     ).rstrip("/")
+    new_website = optional(
+        sections,
+        "New website URL",
+    )
     new_description = optional(
         sections,
         "New description",
@@ -249,6 +253,12 @@ def main() -> int:
         if new_source != str(current_app.get("source", "")).rstrip("/"):
             updated_app["source"] = new_source
             changed_fields.append("source")
+
+    if new_website:
+        validate_https_url(new_website, "New website URL")
+        if new_website != current_app.get("website"):
+            updated_app["website"] = new_website
+            changed_fields.append("website")
 
     if new_description:
         if new_description != current_app.get("description"):
