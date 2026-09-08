@@ -10,10 +10,10 @@
       "description": "Bunkly is an Android app for tracking class attendance, planning bunks, and staying aware of attendance requirements. It is the official successor of BunkWise.",
       "icon_url": "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/bunkly_icon.png?raw=true",
       "screenshot_urls": [
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Home.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Semester%20Setup.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Target%20Planner.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Time%20Table.png?raw=true"
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/01.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/02.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/03.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/04.png?raw=true"
       ],
       "last_modified": 1788841738103,
       "enabled": true,
