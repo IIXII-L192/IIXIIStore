@@ -1,7 +1,24 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-08T04:15:58Z",
+  "generated_at": "2026-09-08T04:28:58Z",
   "apps": [
+    {
+      "id": "bunkly",
+      "name": "Bunkly",
+      "package_name": "l192.aakarsh.bunkly",
+      "source": "https://github.com/IIXII-L192/bunkly-app.git",
+      "description": "Bunkly is an Android app for tracking class attendance, planning bunks, and staying aware of attendance requirements. It is the official successor of BunkWise.",
+      "icon_url": "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/bunkly_icon.png?raw=true",
+      "screenshot_urls": [
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Home.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Semester%20Setup.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Target%20Planner.png?raw=true",
+        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Time%20Table.png?raw=true"
+      ],
+      "last_modified": 1788841738103,
+      "enabled": true,
+      "website": "https://bunkly192.vercel.app"
+    },
     {
       "id": "westeros_portal",
       "name": "Westeros Portal",
@@ -37,23 +54,6 @@
       "last_modified": 1788840499207,
       "enabled": true,
       "website": "https://pocketops192.vercel.app"
-    },
-    {
-      "id": "bunkly",
-      "name": "Bunkly",
-      "package_name": "l192.aakarsh.bunkly",
-      "source": "https://github.com/IIXII-L192/bunkly-app.git",
-      "description": "Bunkly is an Android app for tracking class attendance, planning bunks, and staying aware of attendance requirements. It is the official successor of BunkWise.",
-      "icon_url": "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/bunkly_icon.png",
-      "screenshot_urls": [
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Home.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Semester%20Setup.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Target%20Planner.png?raw=true",
-        "https://github.com/IIXII-L192/bunkly-app/blob/main/assets/Time%20Table.png?raw=true"
-      ],
-      "last_modified": 1788840482792,
-      "enabled": true,
-      "website": "https://bunkly192.vercel.app"
     },
     {
       "id": "bunkwise",
