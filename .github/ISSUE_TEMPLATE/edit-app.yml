@@ -56,7 +56,7 @@ body:
     attributes:
       label: New website URL
       description: Leave empty to keep the current website.
-      placeholder: https://example.com
+      placeholder: https://iixiistore.vercel.app
     validations:
       required: false
 
