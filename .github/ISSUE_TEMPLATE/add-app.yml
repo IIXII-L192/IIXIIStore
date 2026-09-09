@@ -52,7 +52,7 @@ body:
     attributes:
       label: Website URL
       description: Optional. Direct HTTPS URL to the app's website.
-      placeholder: https://example.com
+      placeholder: https://iixiistore.vercel.app
     validations:
       required: false
 
